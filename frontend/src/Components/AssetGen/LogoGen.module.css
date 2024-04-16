@@ -1,0 +1,43 @@
+@import "../../App.css";
+
+.form {
+	font-family: var(--fontFamily);
+	background-color: var(--black50);
+	margin: auto;
+	width: 40%;
+	height: auto;
+	padding-top: 5svh;
+	display: block;
+	margin-top: 10svh;
+	margin-bottom: 10svh;
+}
+
+.form label,
+input,
+textarea {
+	width: 80%;
+	display: block;
+	margin: 10px auto;
+	text-align: center;
+}
+
+.form button {
+	margin: 20px auto;
+}
+
+.preview {
+	padding-bottom: 5svh;
+}
+
+.preview img {
+	width: 80%;
+	margin-top: 2svh;
+}
+
+.preview h1 {
+	margin: 0 auto;
+}
+
+.loading {
+	margin-top: 45vh;
+}

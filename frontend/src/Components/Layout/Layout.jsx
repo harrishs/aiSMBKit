@@ -1,11 +1,11 @@
 import Auth from "../Auth/Auth";
-import ImageGen from "../ImageGen/ImageGen";
+import AssetGen from "../AssetGen/AssetGen";
 
 const Layout = (props) => {
 	return (
 		<>
-			<Auth />
-			<ImageGen />
+			{/* <Auth /> */}
+			<AssetGen />
 		</>
 	);
 };

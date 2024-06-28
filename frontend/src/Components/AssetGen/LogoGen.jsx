@@ -1,5 +1,4 @@
 import { useState } from "react";
-import prompts from "./prompts";
 import styles from "./LogoGen.module.css";
 
 const LogoGen = (props) => {
@@ -73,11 +72,19 @@ const LogoGen = (props) => {
 						},
 						{
 							role: "user",
-							content: prompts.logoGen
-								.replaceAll("$name", name)
-								.replaceAll("$content", content)
-								.replaceAll("primColor", primColor)
-								.replaceAll("$secSolor", secColor),
+							content: `Create a logo for my company called "${name}".
+                            
+							${name} is a moving company, and can be described as "${content}"
+							
+							My colors are ${primColor} as the primary color and ${secColor} as the secondary color. I love the Gumroad design. Get heavily inspired by Gumroad. It's essential.
+							
+							I want something simple that conveys the values of ${name}. The only writing or text on the logo should be the name of the company: "${name}".
+							
+							You will create a detailed description of a vector logo.
+							
+							My ideal clients are around 25-45 years old.
+							
+							Take a deep breath, and work on this problem step-by-step.".`,
 						},
 					],
 					temperature: 0.7,

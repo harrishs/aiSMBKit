@@ -1,11 +1,15 @@
-import Auth from "../Auth/Auth";
-import AssetGen from "../AssetGen/AssetGen";
+// import Auth from "../Auth/Auth";
+// import AssetGen from "../AssetGen/AssetGen";
+// import Translation from "../Translation/Translation";
+import Chatbot from "../Chatbot/Chatbot";
 
 const Layout = (props) => {
 	return (
 		<>
 			{/* <Auth /> */}
-			<AssetGen />
+			{/* <AssetGen /> */}
+			{/* <Translation /> */}
+			<Chatbot />
 		</>
 	);
 };

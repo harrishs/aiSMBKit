@@ -3,13 +3,13 @@ import prompts from "./prompts";
 import styles from "./LogoGen.module.css";
 
 const LogoGen = (props) => {
-	let [email, setEmail] = useState("");
-	let [name, setName] = useState("");
-	let [content, setContent] = useState("");
-	let [logo, setLogo] = useState("");
-	let [primColor, setPrimColor] = useState("");
-	let [secColor, setSecColor] = useState("");
-	let [loading, setLoading] = useState(false);
+	const [email, setEmail] = useState("");
+	const [name, setName] = useState("");
+	const [content, setContent] = useState("");
+	const [logo, setLogo] = useState("");
+	const [primColor, setPrimColor] = useState("");
+	const [secColor, setSecColor] = useState("");
+	const [loading, setLoading] = useState(false);
 
 	const handleChange = (event) => {
 		if (event.target.name === "email") {

@@ -1,56 +1,89 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 
-function Translation(props) {
-	if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-		navigator.mediaDevices
-			.getUserMedia({
-				audio: true,
-			})
-			.then((stream) => {
-				const mediaRecorder = new MediaRecorder(stream);
-				let chunks = [];
-				const [audio, setAudio] = useState(null);
+const mimeType = "audio/webm";
 
-				const handleRecord = () => {
-					mediaRecorder.start();
-					console.log(mediaRecorder.state);
-					console.log("recorder started");
-				};
+const Translation = (props) => {
+	const [permission, setPermission] = useState(false);
+	const [stream, setStream] = useState(null);
+	const mediaRecorder = useRef(null);
+	const [recordingStatus, setRecordingStatus] = useState(false);
+	const [audioChunks, setAudioChunks] = useState([]);
+	const [audio, setAudio] = useState(null);
 
-				const handleStop = () => {
-					mediaRecorder.stop();
-					console.log(mediaRecorder.state);
-					console.log("recorder stopped");
-				};
+	const getMicrophonePermission = async () => {
+		if ("MediaRecorder" in window) {
+			try {
+				const streamData = await navigator.mediaDevices.getUserMedia({
+					audio: true,
+					video: false,
+				});
+				setPermission(true);
+				setStream(streamData);
+			} catch (err) {
+				console.log(err);
+			}
+		} else {
+			alert("Your browser does not support audio recording via this app.");
+		}
+	};
 
-				mediaRecorder.ondataavailable = (e) => {
-					chunks.push(e.data);
-				};
+	const startRecording = async () => {
+		setRecordingStatus(true);
+		const media = new MediaRecorder(stream, { type: mimeType });
+		mediaRecorder.current = media;
+		mediaRecorder.current.start();
+		let localAudioChunks = [];
+		mediaRecorder.current.ondataavailable = (event) => {
+			if (typeof event.data === "undefined") return;
+			if (event.data.size === 0) return;
+			localAudioChunks.push(event.data);
+		};
+		setAudioChunks(localAudioChunks);
+	};
 
-				mediaRecorder.onstop = (e) => {
-					const blob = new Blob(chunks, { type: "audio/ogg; codecs=opus" });
-					chunks = [];
-					const audioURL = window.URL.createObjectURL(blob);
-					setAudio(audioURL);
-				};
-			})
-			.catch((err) => {
-				console.error(`The following getUserMedia error occurred: ${err}`);
-			});
-	} else {
-		console.log("getUserMedia not supported on your browser!");
-	}
+	const stopRecording = () => {
+		setRecordingStatus(false);
+		mediaRecorder.current.stop();
+		mediaRecorder.current.onstop = () => {
+			const audioBlob = new Blob(audioChunks, { type: mimeType });
+			const audioUrl = URL.createObjectURL(audioBlob);
+			setAudio(audioUrl);
+			setAudioChunks([]);
+		};
+	};
 
 	return (
 		<div>
-			<h1>Translation</h1>
-			<form>
-				<button onClick={handleRecord}>Record Audio</button>
-				<button onClick={handleStop}>Stop Recording</button>
-				<audio src={audio} controls></audio>
-			</form>
+			<h2>Audio Recorder</h2>
+			<main>
+				<div>
+					{!permission ? (
+						<button onClick={getMicrophonePermission} type="button">
+							Allow Mic Access
+						</button>
+					) : null}
+					{permission && recordingStatus === false ? (
+						<button onClick={startRecording} type="button">
+							Start Recording
+						</button>
+					) : null}
+					{recordingStatus === true ? (
+						<button onClick={stopRecording} type="button">
+							Stop Recording
+						</button>
+					) : null}
+					{audio ? (
+						<div className="audio-container">
+							<audio src={audio} controls></audio>
+							<a download href={audio}>
+								Download Recording
+							</a>
+						</div>
+					) : null}
+				</div>
+			</main>
 		</div>
 	);
-}
+};
 
 export default Translation;

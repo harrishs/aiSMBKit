@@ -1,6 +1,6 @@
 import { useState, useRef } from "react";
 
-const mimeType = "audio/webm";
+const mimeType = "audio/wav";
 
 const Translation = (props) => {
 	const [permission, setPermission] = useState(false);
@@ -49,6 +49,25 @@ const Translation = (props) => {
 			const audioUrl = URL.createObjectURL(audioBlob);
 			setAudio(audioUrl);
 			setAudioChunks([]);
+
+			const file = new File([audioBlob], "input.wav", { type: mimeType });
+			const formData = new FormData();
+			formData.append("model", "whisper-1");
+			formData.append("file", file);
+
+			console.log(audioBlob);
+			console.log(file);
+
+			fetch("https://api.openai.com/v1/audio/transcriptions", {
+				method: "POST",
+				headers: {
+					Authorization: `Bearer ${import.meta.env.VITE_API}`,
+				},
+				body: formData,
+			})
+				.then((res) => res.json())
+				.then((data) => console.log(data))
+				.catch((err) => console.log(err));
 		};
 	};
 

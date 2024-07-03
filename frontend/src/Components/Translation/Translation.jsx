@@ -55,9 +55,6 @@ const Translation = (props) => {
 			formData.append("model", "whisper-1");
 			formData.append("file", file);
 
-			console.log(audioBlob);
-			console.log(file);
-
 			fetch("https://api.openai.com/v1/audio/transcriptions", {
 				method: "POST",
 				headers: {
@@ -90,14 +87,6 @@ const Translation = (props) => {
 						<button onClick={stopRecording} type="button">
 							Stop Recording
 						</button>
-					) : null}
-					{audio ? (
-						<div className="audio-container">
-							<audio src={audio} controls></audio>
-							<a download href={audio}>
-								Download Recording
-							</a>
-						</div>
 					) : null}
 				</div>
 			</main>

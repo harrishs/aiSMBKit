@@ -20,7 +20,6 @@ const ImageGen = (props) => {
 				<InputLabel>What Type Of Asset Would You Like To Generate?</InputLabel>
 				<Select value={asset} label="Asset" onChange={handleSelectAsset}>
 					<MenuItem value={"Logo"}>Logo</MenuItem>
-					<MenuItem value={"Image"}>Image</MenuItem>
 				</Select>
 			</FormControl>
 			{generator}

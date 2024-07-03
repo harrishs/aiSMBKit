@@ -92,7 +92,6 @@ const LogoGen = (props) => {
 			})
 				.then((res) => res.json())
 				.then((data) => {
-					console.log(data);
 					fetch("https://api.openai.com/v1/images/generations", {
 						method: "POST",
 						headers: {

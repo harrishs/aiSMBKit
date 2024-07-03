@@ -33,7 +33,6 @@ const Chatbot = (props) => {
 		});
 
 		const data = await res.json();
-		console.log(data);
 		setResponse(data.choices[0].message.content);
 		messages.push({ role: "assistant", content: response });
 	};

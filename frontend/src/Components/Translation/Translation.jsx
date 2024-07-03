@@ -9,6 +9,9 @@ const Translation = (props) => {
 	const [recordingStatus, setRecordingStatus] = useState(false);
 	const [audioChunks, setAudioChunks] = useState([]);
 	const [audio, setAudio] = useState(null);
+	const [transcription, setTranscription] = useState(null);
+	const [sourceLanguage, setSourceLanguage] = useState("");
+	const [targetLanguage, setTargetLanguage] = useState("");
 
 	const getMicrophonePermission = async () => {
 		if ("MediaRecorder" in window) {
@@ -63,9 +66,34 @@ const Translation = (props) => {
 				body: formData,
 			})
 				.then((res) => res.json())
-				.then((data) => console.log(data))
+				.then((data) => setTranscription(data.text))
 				.catch((err) => console.log(err));
 		};
+	};
+
+	const translate = (event) => {
+		event.preventDefault();
+		if (sourceLanguage !== "" && targetLanguage !== "") {
+			fetch("https://api.openai.com/v1/chat/completions", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+					Authorization: `Bearer ${import.meta.env.VITE_API}`,
+				},
+				body: JSON.stringify({
+					model: "gpt-4-turbo",
+					messages: [
+						{
+							role: "user",
+							content: `Can you output just the translation of the following text from ${sourceLanguage} to ${targetLanguage}, if you are not familiar with either of the languages output an apology stating the reason you cannot translate and output the original text: ${transcription}`,
+						},
+					],
+				}),
+			})
+				.then((res) => res.json())
+				.then((data) => setTranscription(data.choices[0].message.content))
+				.catch((err) => console.log(err));
+		}
 	};
 
 	return (
@@ -85,8 +113,34 @@ const Translation = (props) => {
 					) : null}
 					{recordingStatus === true ? (
 						<button onClick={stopRecording} type="button">
-							Stop Recording
+							Stop Recording and Transcribe
 						</button>
+					) : null}
+					{audio ? (
+						<div className="audio-player">
+							<audio src={audio} controls></audio>
+							<a download href={audio}>
+								Download Recording
+							</a>
+							<h2>Transcription</h2>
+							<p>{transcription}</p>
+							<form onSubmit={translate}>
+								<h4>Enter Translation Languages</h4>
+								<label>Source Language:</label>
+								<input
+									type="text"
+									value={sourceLanguage}
+									onChange={(e) => setSourceLanguage(e.target.value)}
+								></input>
+								<label>Target Language:</label>
+								<input
+									type="text"
+									value={targetLanguage}
+									onChange={(e) => setTargetLanguage(e.target.value)}
+								></input>
+								<button type="submit">Translate</button>
+							</form>
+						</div>
 					) : null}
 				</div>
 			</main>

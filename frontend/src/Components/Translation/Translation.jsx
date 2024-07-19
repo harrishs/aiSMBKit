@@ -66,7 +66,36 @@ const Translation = (props) => {
 				body: formData,
 			})
 				.then((res) => res.json())
-				.then((data) => setTranscription(data.text))
+				.then((data) => {
+					//Original transcription below commented out to use ChatGPT to convert transcription to script
+					// setTranscription(data.text);
+					const chatMsgs = [
+						{
+							role: "system",
+							content:
+								"You are a talented transcriber, who works in a multitude of languages and specializes in transcribing sales calls. You will be provided with a transcription of a conversation between a sales/ field agent and a potential customer. Identify who the sales agent is and who the customer is, and then transcribe the conversation in this format: [{role: 'salesperson', content: 'transcribed speech'}, {role: 'customer', content: 'transcribed speech'}]",
+						},
+						{
+							role: "user",
+							content:
+								"Here is the transcription to be converted: " + data.text,
+						},
+					];
+					fetch("https://api.openai.com/v1/chat/completions", {
+						method: "POST",
+						headers: {
+							"Content-Type": "application/json",
+							Authorization: `Bearer ${import.meta.env.VITE_API}`,
+						},
+						body: JSON.stringify({
+							model: "gpt-4-turbo",
+							messages: chatMsgs,
+						}),
+					})
+						.then((res) => res.json())
+						.then((data) => setTranscription(data.choices[0].message.content))
+						.catch((err) => console.log(err));
+				})
 				.catch((err) => console.log(err));
 		};
 	};
